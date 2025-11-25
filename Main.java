@@ -1,5 +1,4 @@
 
-
 import java.util.*;
 
 // ------------------------- Custom Exception -------------------------
@@ -142,6 +141,10 @@ class Staff {
     public String getTask() {
         return task;
     }
+
+    public String getName() {
+        return name;
+    }
 }
 
 // ------------------------- Kitchen -------------------------
@@ -179,11 +182,13 @@ class Manager {
         kitchen.cookOrder(order);
     }
 
-    public void assignTasks() {
+    // Dynamic task assignment by manager
+    public void assignTasksByManager(Scanner sc) {
+        System.out.println("\nAssign tasks to staff:");
         for (Staff s : staffList) {
-            if (s.getRole().equalsIgnoreCase("Cook")) s.assignTask("Prepare food orders");
-            if (s.getRole().equalsIgnoreCase("Waiter")) s.assignTask("Serve tables to customers");
-            if (s.getRole().equalsIgnoreCase("Sweeper")) s.assignTask("Clean tables and kitchen");
+            System.out.println("Assign task to " + s.getRole() + " " + s.getName() + ":");
+            String task = sc.nextLine();
+            s.assignTask("Assigned by Manager: " + task);
         }
     }
 
@@ -226,7 +231,6 @@ public class Main {
         manager.addStaff(new Staff("Alice", "Cook"));
         manager.addStaff(new Staff("Bob", "Waiter"));
         manager.addStaff(new Staff("Charlie", "Sweeper"));
-        manager.assignTasks();
 
         // Kitchen
         Kitchen kitchen = new Kitchen() {
@@ -239,8 +243,7 @@ public class Main {
         // Role Selection
         System.out.println("Welcome to Our Restaurant");
         System.out.println("Select Role: 1-Customer, 2-Manager, 3-Staff");
-        int roleChoice = sc.nextInt();
-        sc.nextLine(); // consume newline
+        int roleChoice = sc.nextInt(); sc.nextLine();
 
         switch (roleChoice) {
             case 1: // Customer
@@ -313,11 +316,13 @@ public class Main {
 
                 System.out.println("Enjoy your " + event + " at Table "+ bookedTable.getTableNumber() + "!");
                 System.out.println("You can go to rear view of restaurant and click photos!");
-
                 break;
 
             case 2: // Manager
                 System.out.println("\nManager Dashboard:");
+                manager.displayStaff();
+                manager.assignTasksByManager(sc);
+                System.out.println("\nUpdated Staff Tasks:");
                 manager.displayStaff();
                 break;
 
@@ -326,13 +331,10 @@ public class Main {
                 String staffName = sc.nextLine();
                 boolean found=false;
                 for(Staff s : manager.getStaffList()) {
-                    if(s.getRole().equalsIgnoreCase("Cook") && s.getRole().equalsIgnoreCase("Cook") || s.getRole().equalsIgnoreCase("Waiter") || s.getRole().equalsIgnoreCase("Sweeper")) {
-                        if(s.getRole().equalsIgnoreCase("Cook") && s.getRole().equalsIgnoreCase("Cook")) {
-                            System.out.println("You are assigned task: Prepare food orders");
-                        } else {
-                            System.out.println("Your assigned task: " + s.getTask());
-                        }
+                    if(s.getName().equalsIgnoreCase(staffName)) {
+                        System.out.println("Hello " + staffName + "! Your assigned task: " + s.getTask());
                         found=true;
+                        break;
                     }
                 }
                 if(!found) System.out.println("Staff not found!");
